@@ -29,13 +29,15 @@ func (m *SpecMeta) GetPrimitiveType(typ string, format string) string {
 		}
 	case "string":
 		return "string"
+	case "boolean":
+		return "bool"
 	default:
 		return ""
 	}
 }
 
-func (m *SpecMeta) GetDefaultValue(val string, typ string) string {
-	if len(strings.TrimSpace(val)) == 0 {
+func (m *SpecMeta) GetDefaultValue(val interface{}, typ string) string {
+	if val == nil {
 		return ""
 	}
 
@@ -43,7 +45,7 @@ func (m *SpecMeta) GetDefaultValue(val string, typ string) string {
 	case "string":
 		return fmt.Sprintf("\"%s\"", val)
 	default:
-		return val
+		return fmt.Sprintf("%v", val)
 	}
 }
 
@@ -94,7 +96,7 @@ func (m *SpecMeta) SetterName(propName string) string {
 	return "Set" + strcase.ToCamel(propName)
 }
 
-func (m *SpecMeta) NewPropertyGetter(objType string, propName string, propType string, defaultVal string) string {
+func (m *SpecMeta) NewPropertyGetter(objType string, propName string, propType string, defaultVal interface{}) string {
 	getter := m.GetterName(propName)
 	setter := m.SetterName(propName)
 	doc := fmt.Sprintf("%s returns the value of %s", getter, propName)

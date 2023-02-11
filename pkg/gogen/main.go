@@ -8,64 +8,38 @@ import (
 	"path"
 	"strings"
 
-	"github.com/ashutshkumr/openapiart/pkg/spec"
 	"github.com/getkin/kin-openapi/openapi3"
-
-	"gopkg.in/yaml.v2"
 )
 
 type SpecMeta struct {
-	Spec spec.Spec
-	Code strings.Builder
+	Spec            *openapi3.T
+	Code            strings.Builder
+	SchemaGenerated map[string]struct{}
 }
 
-func ParseSpec(spec spec.Spec) error {
-	log.Println("Parsing schemas ...")
+func ParseSpec(spec *openapi3.T) error {
+	log.Println("Parsing spec ...")
 
-	meta := SpecMeta{
-		Spec: spec,
-	}
-
-	for name, schema := range spec.Schemas {
-		if err := meta.ParseSchema(name, schema); err != nil {
-			return fmt.Errorf("could not parse schema %s: %v", name, err)
-		}
+	meta := SpecMeta{Spec: spec}
+	meta.LogVersions()
+	if err := meta.ParseSchemas(); err != nil {
+		return fmt.Errorf("could not parse schemas: %v", err)
 	}
 
 	return WritePackage("pkg/sdk", meta.GetCode())
 }
 
-func ParseYamlBytes(bytes []byte) error {
-	spec := spec.Spec{}
-	if err := yaml.Unmarshal(bytes, &spec); err != nil {
-		return fmt.Errorf("could not unmarshal bytes: %v", err)
-	}
-
-	return ParseSpec(spec)
-}
-
 func ParseYamlPath(path string) error {
-	log.Printf("Parsing spec from %s ...\n", path)
-	// b, err := os.ReadFile(path)
-	// if err != nil {
-	// 	return fmt.Errorf("could not read file %s: %v", path, err)
-	// }
+	log.Printf("Loading spec from %s ...\n", path)
 
 	loader := openapi3.Loader{Context: context.Background()}
 	spec, err := loader.LoadFromFile(path)
 	if err != nil {
 		return fmt.Errorf("could not load file %s: %v", path, err)
 	}
-	log.Println("Got schemas:")
-	for name, obj := range spec.Components.Schemas {
-		log.Println(name)
-		if obj.Value != nil && obj.Value.Type == "object" {
-			for name, _ := range obj.Value.Properties {
-				log.Printf("  - %s\n", name)
-			}
-		}
-	}
-	return nil
+
+	log.Println("Successfully loaded.")
+	return ParseSpec(spec)
 }
 
 func WritePackage(dir string, code string) error {

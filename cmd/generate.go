@@ -6,10 +6,11 @@ import (
 )
 
 var generateCmd = &cobra.Command{
-	Use:   "generate",
+	Use:   "generate [spec path]",
 	Short: "Generate SDK",
+	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		gogen.ParseYamlPath("api/openapi.yaml")
+		gogen.ParseYamlPath(args[0])
 		return nil
 	},
 }
