@@ -1,6 +1,7 @@
 package gogen
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -8,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/ashutshkumr/openapiart/pkg/spec"
+	"github.com/getkin/kin-openapi/openapi3"
 
 	"gopkg.in/yaml.v2"
 )
@@ -44,12 +46,26 @@ func ParseYamlBytes(bytes []byte) error {
 
 func ParseYamlPath(path string) error {
 	log.Printf("Parsing spec from %s ...\n", path)
-	b, err := os.ReadFile(path)
-	if err != nil {
-		return fmt.Errorf("could not read file %s: %v", path, err)
-	}
+	// b, err := os.ReadFile(path)
+	// if err != nil {
+	// 	return fmt.Errorf("could not read file %s: %v", path, err)
+	// }
 
-	return ParseYamlBytes(b)
+	loader := openapi3.Loader{Context: context.Background()}
+	spec, err := loader.LoadFromFile(path)
+	if err != nil {
+		return fmt.Errorf("could not load file %s: %v", path, err)
+	}
+	log.Println("Got schemas:")
+	for name, obj := range spec.Components.Schemas {
+		log.Println(name)
+		if obj.Value != nil && obj.Value.Type == "object" {
+			for name, _ := range obj.Value.Properties {
+				log.Printf("  - %s\n", name)
+			}
+		}
+	}
+	return nil
 }
 
 func WritePackage(dir string, code string) error {
