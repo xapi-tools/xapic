@@ -29,7 +29,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Config"
-        400:
+        default:
           description: Failed to return configuration
           content:
             application/json:
@@ -53,7 +53,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ResponseOk"
-        400:
+        default:
           description: Failed pushing configuration
           content:
             application/json:
