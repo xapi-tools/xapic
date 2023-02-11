@@ -3,6 +3,8 @@ openapi: 3.1.0
 info:
   title: openapiart
   version: 0.0.1
+  description: |
+    This is a reference specification demonstrating features supported by openapiart.
   license:
     name: MIT
     url: https://github.com/ashutshkumr/openapiart/blob/main/license
@@ -10,21 +12,34 @@ info:
 servers:
   - url: localhost:8443
 
+security:
+  - {}
+
 paths:
   /config:
     get:
       operationId: get_config
       summary: Get configuration from server
+      tags:
+        - config
       responses:
-        default:
-          description: hello
+        200:
+          description: Successfully returned configuration
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Config"
+        400:
+          description: Failed to return configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseError"
     post:
       operationId: push_config
       summary: Push configuration to server
+      tags:
+        - config
       requestBody:
         content:
           application/json:
@@ -32,144 +47,160 @@ paths:
               $ref: "#/components/schemas/Config"
 
       responses:
-        default:
-          description: hello
+        200:
+          description: Successfully pushed configuration
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Status"
+                $ref: "#/components/schemas/ResponseOk"
+        400:
+          description: Failed pushing configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseError"
 
 components:
   schemas:
     Config:
       type: object
       properties:
-        required_primitives:
-          $ref: "#/components/schemas/RequiredPrimitives"
-        optional_primitives:
-          $ref: "#/components/schemas/OptionalPrimitives"
-        constrained_primitives:
-          $ref: "#/components/schemas/ConstrainedPrimitives"
-        enums:
-          $ref: "#/components/schemas/Enums"
-        required_array_of_primitives:
-          $ref: "#/components/schemas/RequiredArrayOfPrimitives"
-        optional_array_of_primitives:
-          $ref: "#/components/schemas/OptionalArrayOfPrimitives"
-        array_of_constrained_primitives:
-          $ref: "#/components/schemas/ArrayOfConstrainedPrimitives"
-        array_of_enums:
-          $ref: "#/components/schemas/ArrayOfEnums"
+        required_val:
+          $ref: "#/components/schemas/RequiredVal"
+        optional_val:
+          $ref: "#/components/schemas/OptionalVal"
+        boundary_val:
+          $ref: "#/components/schemas/BoundaryVal"
+        enum_val:
+          $ref: "#/components/schemas/EnumVal"
+        required_val_array:
+          $ref: "#/components/schemas/RequiredValArray"
+        optional_val_array:
+          $ref: "#/components/schemas/OptionalValArray"
+        boundary_val_array:
+          $ref: "#/components/schemas/BoundaryValArray"
+        enum_val_array:
+          $ref: "#/components/schemas/EnumValArray"
 
-    Status:
+    ResponseOk:
       type: object
       properties:
         warnings:
           type: array
           items:
             type: string
+
+    ResponseError:
+      type: object
+      properties:
+        code:
+          type: string
+          default: internal
+          enum:
+            - validation
+            - internal
         errors:
           type: array
           items:
             type: string
 
-    RequiredPrimitives:
+    RequiredVal:
       type: object
       required:
-        - int_value
-        - num_value
-        - str_value
-        - bool_value
+        - int_val
+        - num_val
+        - str_val
+        - bool_val
       properties:
-        int_value:
+        int_val:
           type: integer
-        num_value:
+        num_val:
           type: number
-        str_value:
+        str_val:
           type: string
-        bool_value:
+        bool_val:
           type: boolean
 
-    OptionalPrimitives:
+    OptionalVal:
       type: object
       properties:
-        int_value:
+        int_val:
           type: integer
           default: 50
-        num_value:
+        num_val:
           type: number
           default: 50.05
-        str_value:
+        str_val:
           type: string
-          default: default_str_value
-        bool_value:
+          default: default_str_val
+        bool_val:
           type: boolean
           default: true
 
-    ConstrainedPrimitives:
+    BoundaryVal:
       type: object
       properties:
-        int_value:
+        int_val:
           type: integer
           default: 50
           minimum: 5
           maximum: 100
-        num_value:
+        num_val:
           type: number
           default: 50.05
           minimum: 5.0
           maximum: 100.0
 
-    RequiredArrayOfPrimitives:
+    RequiredValArray:
       type: object
       required:
-        - int_values
-        - num_values
-        - str_values
-        - bool_values
+        - int_vals
+        - num_vals
+        - str_vals
+        - bool_vals
       properties:
-        int_values:
+        int_vals:
           type: array
           items:
             type: integer
-        num_values:
+        num_vals:
           type: array
           items:
             type: number
-        str_values:
+        str_vals:
           type: array
           items:
             type: string
-        bool_values:
+        bool_vals:
           type: array
           items:
             type: boolean
 
-    OptionalArrayOfPrimitives:
+    OptionalValArray:
       type: object
       properties:
-        int_values:
+        int_vals:
           type: array
           items:
             type: integer
           default:
             - 10
             - 20
-        num_values:
+        num_vals:
           type: array
           items:
             type: number
           default:
             - 10.01
             - 20.02
-        str_values:
+        str_vals:
           type: array
           items:
             type: string
           default:
             - first_str
             - second_str
-        bool_values:
+        bool_vals:
           type: array
           items:
             type: boolean
@@ -177,17 +208,17 @@ components:
             - true
             - false
 
-    ArrayOfConstrainedPrimitives:
+    BoundaryValArray:
       type: object
       properties:
-        int_values:
+        int_vals:
           type: array
           items:
             type: integer
             default: 50
             minimum: 5
             maximum: 100
-        num_values:
+        num_vals:
           type: array
           items:
             type: number
@@ -195,7 +226,7 @@ components:
             minimum: 5.0
             maximum: 100.0
 
-    Enums:
+    EnumVal:
       type: object
       required:
         - required_enum
@@ -213,7 +244,7 @@ components:
             - second_val
             - default_val
 
-    ArrayOfEnums:
+    EnumValArray:
       type: object
       required:
         - required_enums
