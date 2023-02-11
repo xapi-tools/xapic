@@ -1,0 +1,236 @@
+openapi: 3.1.0
+
+info:
+  title: openapiart
+  version: 0.0.1
+  license:
+    name: MIT
+    url: https://github.com/ashutshkumr/openapiart/blob/main/license
+
+servers:
+  - url: localhost:8443
+
+paths:
+  /config:
+    get:
+      operationId: get_config
+      summary: Get configuration from server
+      responses:
+        default:
+          description: hello
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Config"
+    post:
+      operationId: push_config
+      summary: Push configuration to server
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Config"
+
+      responses:
+        default:
+          description: hello
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+components:
+  schemas:
+    Config:
+      type: object
+      properties:
+        required_primitives:
+          $ref: "#/components/schemas/RequiredPrimitives"
+        optional_primitives:
+          $ref: "#/components/schemas/OptionalPrimitives"
+        constrained_primitives:
+          $ref: "#/components/schemas/ConstrainedPrimitives"
+        enums:
+          $ref: "#/components/schemas/Enums"
+        required_array_of_primitives:
+          $ref: "#/components/schemas/RequiredArrayOfPrimitives"
+        optional_array_of_primitives:
+          $ref: "#/components/schemas/OptionalArrayOfPrimitives"
+        array_of_constrained_primitives:
+          $ref: "#/components/schemas/ArrayOfConstrainedPrimitives"
+        array_of_enums:
+          $ref: "#/components/schemas/ArrayOfEnums"
+
+    Status:
+      type: object
+      properties:
+        warnings:
+          type: array
+          items:
+            type: string
+        errors:
+          type: array
+          items:
+            type: string
+
+    RequiredPrimitives:
+      type: object
+      required:
+        - int_value
+        - num_value
+        - str_value
+        - bool_value
+      properties:
+        int_value:
+          type: integer
+        num_value:
+          type: number
+        str_value:
+          type: string
+        bool_value:
+          type: boolean
+
+    OptionalPrimitives:
+      type: object
+      properties:
+        int_value:
+          type: integer
+          default: 50
+        num_value:
+          type: number
+          default: 50.05
+        str_value:
+          type: string
+          default: default_str_value
+        bool_value:
+          type: boolean
+          default: true
+
+    ConstrainedPrimitives:
+      type: object
+      properties:
+        int_value:
+          type: integer
+          default: 50
+          minimum: 5
+          maximum: 100
+        num_value:
+          type: number
+          default: 50.05
+          minimum: 5.0
+          maximum: 100.0
+
+    RequiredArrayOfPrimitives:
+      type: object
+      required:
+        - int_values
+        - num_values
+        - str_values
+        - bool_values
+      properties:
+        int_values:
+          type: array
+          items:
+            type: integer
+        num_values:
+          type: array
+          items:
+            type: number
+        str_values:
+          type: array
+          items:
+            type: string
+        bool_values:
+          type: array
+          items:
+            type: boolean
+
+    OptionalArrayOfPrimitives:
+      type: object
+      properties:
+        int_values:
+          type: array
+          items:
+            type: integer
+          default:
+            - 10
+            - 20
+        num_values:
+          type: array
+          items:
+            type: number
+          default:
+            - 10.01
+            - 20.02
+        str_values:
+          type: array
+          items:
+            type: string
+          default:
+            - first_str
+            - second_str
+        bool_values:
+          type: array
+          items:
+            type: boolean
+          default:
+            - true
+            - false
+
+    ArrayOfConstrainedPrimitives:
+      type: object
+      properties:
+        int_values:
+          type: array
+          items:
+            type: integer
+            default: 50
+            minimum: 5
+            maximum: 100
+        num_values:
+          type: array
+          items:
+            type: number
+            default: 50.05
+            minimum: 5.0
+            maximum: 100.0
+
+    Enums:
+      type: object
+      required:
+        - required_enum
+      properties:
+        required_enum:
+          type: string
+          enum:
+            - first_val
+            - second_val
+        optional_enum:
+          type: string
+          default: default_val
+          enum:
+            - first_val
+            - second_val
+            - default_val
+
+    ArrayOfEnums:
+      type: object
+      required:
+        - required_enums
+      properties:
+        required_enums:
+          type: array
+          items:
+            type: string
+            enum:
+              - first_val
+              - second_val
+        optional_enums:
+          type: array
+          items:
+            type: string
+            default: default_val
+            enum:
+              - first_val
+              - second_val
+              - default_val

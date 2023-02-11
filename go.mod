@@ -1,6 +1,6 @@
 module github.com/ashutshkumr/openapiart
 
-go 1.18
+go 1.20
 
 require (
 	github.com/iancoleman/strcase v0.2.0

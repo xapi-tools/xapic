@@ -7,6 +7,11 @@
     "go.testEnvVars": {
         "CGO_ENABLED": 0,
     },
+    "go.testFlags": [
+        "-v",
+        "-count",
+        "1"
+    ],
     "editor.formatOnSave": true,
     "gopls": {
         "build.env": {
@@ -19,7 +24,4 @@
     "files.insertFinalNewline": true,
     "files.eol": "\n",
     "diffEditor.ignoreTrimWhitespace": false,
-    "cSpell.ignoreWords": [
-        "goVersion"
-    ],
 }

@@ -9,7 +9,7 @@ var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate SDK",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		gogen.ParseYamlPath("api/api.yaml")
+		gogen.ParseYamlPath("api/openapi.yaml")
 		return nil
 	},
 }
