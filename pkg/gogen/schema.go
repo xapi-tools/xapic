@@ -27,18 +27,23 @@ func (m *SpecMeta) ParseSchemas() error {
 }
 
 func (m *SpecMeta) ParseSchema(name string, schema *openapi3.SchemaRef) error {
-	if _, ok := m.SchemaGenerated[name]; ok {
+	if _, ok := m.SchemaGenerated[schema.Ref]; ok {
 		return nil
 	}
 
-	log.Printf("Generating Type %s ...\n", name)
+	log.Printf("Generating Type %s ...\n", schema.Ref)
 	var body strings.Builder
 	var methods strings.Builder
 
 	if schema.Value.Type == "object" {
 		for pName, prop := range schema.Value.Properties {
-			log.Printf("Parsing property %s.%s ...\n", name, pName)
+			logPrefix := fmt.Sprintf("[%s.%s]", name, pName)
+			log.Printf("%s Parsing property ...\n", logPrefix)
 
+			// switch prop.Value.Type {
+			// case "object":
+			// 	m.ParseSchema()
+			// }
 			if pType := m.GetPrimitiveType(prop.Value.Type, prop.Value.Format); len(pType) != 0 {
 				if _, err := body.WriteString(m.NewProperty(prop.Value.Description, strcase.ToCamel(pName), pType)); err != nil {
 					return fmt.Errorf("could not write property: %v", err)
