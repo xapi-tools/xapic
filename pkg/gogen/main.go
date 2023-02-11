@@ -20,7 +20,7 @@ type SpecMeta struct {
 func ParseSpec(spec *openapi3.T) error {
 	log.Println("Parsing spec ...")
 
-	meta := SpecMeta{Spec: spec}
+	meta := SpecMeta{Spec: spec, SchemaGenerated: map[string]struct{}{}}
 	meta.LogVersions()
 	if err := meta.ParseSchemas(); err != nil {
 		return fmt.Errorf("could not parse schemas: %v", err)
@@ -60,5 +60,6 @@ func WritePackage(dir string, code string) error {
 		return fmt.Errorf("could not write file %s: %v", path, err)
 	}
 
+	log.Println("SDK successfully generated in", dir)
 	return nil
 }

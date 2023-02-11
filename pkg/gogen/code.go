@@ -7,6 +7,26 @@ import (
 	"github.com/iancoleman/strcase"
 )
 
+var ValidGoBasicTypes = []string{
+	"bool",
+	"int",
+	"int32",
+	"int64",
+	"float32",
+	"float64",
+	"string",
+}
+
+func (m *SpecMeta) IsValidGoBasicType(typ string) bool {
+	for _, v := range ValidGoBasicTypes {
+		if v == typ {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (m *SpecMeta) GetPrimitiveType(typ string, format string) string {
 	switch typ {
 	case "integer":
@@ -98,21 +118,32 @@ func (m *SpecMeta) SetterName(propName string) string {
 
 func (m *SpecMeta) NewPropertyGetter(objType string, propName string, propType string, defaultVal interface{}) string {
 	getter := m.GetterName(propName)
-	setter := m.SetterName(propName)
 	doc := fmt.Sprintf("%s returns the value of %s", getter, propName)
 
-	body := fmt.Sprintf("    return *o.%s\n", propName)
-
-	if defVal := m.GetDefaultValue(defaultVal, propType); len(defVal) == 0 {
-
+	var body string
+	var retType string
+	if m.IsValidGoBasicType(propType) {
+		// // if property is of primitive type
+		body = fmt.Sprintf("    return *o.%s\n", propName)
+		if defVal := m.GetDefaultValue(defaultVal, propType); len(defVal) > 0 {
+			setter := m.SetterName(propName)
+			body = fmt.Sprintf(
+				"    if o.%s == nil {\n        o.%s(%s)\n    }\n\n",
+				propName, setter, defVal,
+			) + body
+		}
+		retType = propType
 	} else {
+		// if property is not of primitive type
+		body = fmt.Sprintf("    return o.%s\n", propName)
 		body = fmt.Sprintf(
-			"    if o.%s == nil {\n        o.%s(%s)\n    }\n\n",
-			propName, setter, defVal,
+			"    if o.%s == nil {\n        o.%s = &%s{}\n    }\n\n",
+			propName, propName, propType,
 		) + body
+		retType = "*" + propType
 	}
 
-	return m.NewMethod(doc, "o", "*"+objType, getter, []string{}, []string{propType}, body)
+	return m.NewMethod(doc, "o", "*"+objType, getter, []string{}, []string{retType}, body)
 }
 
 func (m *SpecMeta) NewPropertySetter(objType string, propName string, propType string) string {

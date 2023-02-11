@@ -10,7 +10,6 @@ var generateCmd = &cobra.Command{
 	Short: "Generate SDK",
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		gogen.ParseYamlPath(args[0])
-		return nil
+		return gogen.ParseYamlPath(args[0])
 	},
 }
