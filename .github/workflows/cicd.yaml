@@ -19,7 +19,7 @@ jobs:
         run: go install -v .
 
       - name: Generate
-        run: xapic generate api/openapi.yaml
+        run: xapic generate api/api.yaml
 
       - name: Unit Test
         run: go test -v ./...
