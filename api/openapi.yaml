@@ -1,13 +1,13 @@
 openapi: 3.1.0
 
 info:
-  title: openapiart
+  title: xapi
   version: 0.0.1
   description: |
-    This is a reference specification demonstrating features supported by openapiart.
+    This is a reference specification demonstrating features supported by xapi.
   license:
     name: MIT
-    url: https://github.com/ashutshkumr/openapiart/blob/main/license
+    url: https://github.com/xapi-tools/xapic/blob/main/license
 
 servers:
   - url: localhost:8443

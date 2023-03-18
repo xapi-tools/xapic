@@ -1,6 +1,6 @@
 package main
 
-import "github.com/ashutshkumr/openapiart/cmd"
+import "github.com/xapi-tools/xapic/cmd"
 
 func main() {
 	cmd.Execute()

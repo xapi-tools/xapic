@@ -8,8 +8,8 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "openapiart",
-	Short: "OpenAPI Artifact - a tool to validate, bundle and generate SDK from OpenAPI spec with custom extensions",
+	Use:   "xapic",
+	Short: "xapi compiler - a tool to validate, bundle and generate SDK from specification written using OpenAPI with custom extensions",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		return nil
 	},

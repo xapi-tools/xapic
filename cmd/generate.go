@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/ashutshkumr/openapiart/pkg/gogen"
 	"github.com/spf13/cobra"
+	"github.com/xapi-tools/xapic/pkg/gogen"
 )
 
 var generateCmd = &cobra.Command{
